@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+    <br><br>
+    <div class="container">
+        <div class="row">
+            {% for company in companies %}
+                <a style="font-size: 30px;" href="{% url "one_company" id=company.id %}">{{ company.name }}</a>
+                <br>
+                <h4>{{ company.description }}</h4>
+                <br>
+
+                <hr>
+            {% endfor %}
+
+
+        {% if companies.has_other_pages %}
+          <ul class="pagination">
+            {% if companies.has_previous %}
+              <li><a href="?page={{ companies.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in companies.paginator.page_range %}
+              {% if companies.number == i %}
+                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+              {% else %}
+                <li><a href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+            {% if companies.has_next %}
+              <li><a href="?page={{ companies.next_page_number }}">&raquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+          </ul>
+        {% endif %}
+
+       </div>
+    </div>
+
+{% endblock %}

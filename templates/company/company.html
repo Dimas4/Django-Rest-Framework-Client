@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<br><br>
+<div class="container">
+    <div class="row">
+        <h2>{{ company.name }}</h2>
+        <br>
+        <h3>{{ company.description }}</h3>
+        <hr>
+        <h3>Our employee:</h3>
+
+        {% for employee in employees %}
+            <a style="font-size: 20px;" href="{% url "one_employee" id=employee.employee.id %}">{{ employee.employee.first_name }} {{ employee.employee.second_name }}</a>
+            <br>
+            <small>{{ employee.employee.created_on }}</small>
+            <hr>
+        {% endfor %}
+
+             {% if employees.has_other_pages %}
+              <ul class="pagination">
+                {% if employees.has_previous %}
+                  <li><a href="?page={{ employees.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in employees.paginator.page_range %}
+                  {% if employees.number == i %}
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                  {% else %}
+                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if employees.has_next %}
+                  <li><a href="?page={{ employees.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+              </ul>
+            {% endif %}
+
+    </div>
+</div>
+
+
+{% endblock %}
