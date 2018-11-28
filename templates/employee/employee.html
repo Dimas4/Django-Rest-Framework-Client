@@ -7,6 +7,39 @@
     <div class="row">
         <h3>First name: {{ employee.first_name }}</h3>
         <h3>Last name: {{ employee.second_name }}</h3>
+        <hr>
+        <h3>Salary:</h3>
+        <br>
+        {% for salary in salaries %}
+
+            <a style="font-size: 30px;" href="{% url "one_company" id=salary.company.id %}">Company: {{ salary.company.name }}</a>
+            <h4>Salary: {{ salary.salary }}</h4>
+            <small>Data: {{ salary.month  }}</small>
+            <hr>
+        {% endfor %}
+        
+        {% if salaries.has_other_pages %}
+          <ul class="pagination">
+            {% if salaries.has_previous %}
+              <li><a href="?page={{ salaries.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in salaries.paginator.page_range %}
+              {% if salaries.number == i %}
+                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+              {% else %}
+                <li><a href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+            {% if salaries.has_next %}
+              <li><a href="?page={{ salaries.next_page_number }}">&raquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+          </ul>
+        {% endif %}
+
     </div>
 </div>
 {% endblock %}
