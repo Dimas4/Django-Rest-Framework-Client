@@ -17,6 +17,12 @@ ALLOWED_HOSTS = []
 
 BASE_API_URL = "http://127.0.0.1:8000/"
 
+API_URLS = {
+    'company': f'{BASE_API_URL}api/company/',
+    'employee': f"{BASE_API_URL}api/employee/",
+    'salary': f"{BASE_API_URL}api/salary/",
+}
+
 
 # Application definition
 
