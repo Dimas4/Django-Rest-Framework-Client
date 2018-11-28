@@ -52,10 +52,6 @@ def get_companies(request):
     return render(request, "company/companies.html", context=context)
 
 
-def get_employee_by_company_id(request, id):
-    pass
-
-
 def get_employee(request, id):
     context = {}
     employee = requests.get(f"http://127.0.0.1:8000/api/employee/{id}").json()

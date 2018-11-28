@@ -1,6 +1,6 @@
 from django.urls import path, re_path
 
-from .views import get_companies, get_company, get_employee, get_employee_by_company_id
+from .views import get_companies, get_company, get_employee
 
 
 urlpatterns = [
