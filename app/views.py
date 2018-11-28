@@ -2,27 +2,40 @@ import requests
 
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render
+from django.conf import settings
 
 
-def get_company(request, id):
-    context = {}
-    company = requests.get(f"http://127.0.0.1:8000/api/company/{id}").json()
+def get_json(url):
+    return requests.get(url).json()
 
-    employees = requests.get(company['company_employee']).json()
-    data = employees['results']
 
-    while employees['next']:
-        employees = requests.get(employees['next']).json()
-        data.extend(employees['results'])
+def get_all_data(data):
+    result = data['results']
+    while data['next']:
+        dat_json = get_json(data['next'])
+        result.extend(dat_json['results'])
+    return result
 
-    page = request.GET.get('page', 1)
-    paginator = Paginator(data, 5)
+
+def get_actual_page(data, page, row_per_page=5):
+    paginator = Paginator(data, row_per_page)
     try:
         employees = paginator.page(page)
     except PageNotAnInteger:
         employees = paginator.page(1)
     except EmptyPage:
         employees = paginator.page(paginator.num_pages)
+    return employees
+
+
+def get_company(request, id):
+    context = {}
+    company = get_json(f"{settings.BASE_API_URL}api/company/{id}")
+
+    employees = get_json(company['company_employee'])
+    data = get_all_data(employees)
+    page = request.GET.get('page', 1)
+    employees = get_actual_page(data, page)
 
     context['employees'] = employees
     context['company'] = company
@@ -32,21 +45,11 @@ def get_company(request, id):
 def get_companies(request):
     context = {}
 
-    companies = requests.get("http://127.0.0.1:8000/api/company/").json()
-    data = companies['results']
-
-    while companies['next']:
-        companies = requests.get(companies['next']).json()
-        data.extend(companies['results'])
+    companies = get_json(f"{settings.BASE_API_URL}api/company/")
+    data = get_all_data(companies)
 
     page = request.GET.get('page', 1)
-    paginator = Paginator(data, 10)
-    try:
-        companies = paginator.page(page)
-    except PageNotAnInteger:
-        companies = paginator.page(1)
-    except EmptyPage:
-        companies = paginator.page(paginator.num_pages)
+    companies = get_actual_page(data, page, 10)
 
     context['companies'] = companies
     return render(request, "company/companies.html", context=context)
@@ -54,25 +57,14 @@ def get_companies(request):
 
 def get_employee(request, id):
     context = {}
-    employee = requests.get(f"http://127.0.0.1:8000/api/employee/{id}").json()
+    employee = get_json(f"{settings.BASE_API_URL}api/employee/{id}")
 
-    salaries = requests.get(f"http://127.0.0.1:8000/api/salary/{id}").json()
-    data = salaries['results']
-
-    while salaries['next']:
-        salaries = requests.get(salaries['next']).json()
-        data.extend(salaries['results'])
+    salaries = get_json(f"{settings.BASE_API_URL}api/salary/{id}")
+    data = get_all_data(salaries)
 
     page = request.GET.get('page', 1)
-    paginator = Paginator(data, 5)
-    try:
-        salaries = paginator.page(page)
-    except PageNotAnInteger:
-        salaries = paginator.page(1)
-    except EmptyPage:
-        salaries = paginator.page(paginator.num_pages)
+    salaries = get_actual_page(data, page)
 
     context['employee'] = employee
     context['salaries'] = salaries
     return render(request, "employee/employee.html", context=context)
-

@@ -8,5 +8,4 @@ urlpatterns = [
     re_path('^companies/(?P<id>\d+)$', get_company, name='one_company'),
 
     re_path('^employees/(?P<id>\d+)$', get_employee, name='one_employee'),
-
 ]
